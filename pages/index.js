@@ -1,66 +1,61 @@
 import Head from "next/head";
-import Link from "next/link";
-import styles from "../styles/Home.module.css";
+import Header from "../components/header";
+import Card from "../components/card";
+import OrderPopup from "../components/order_popup";
+import { compareValues, excelConverter } from "../js/excelData";
 
-export default function Home() {
+export default function Home({ data }) {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
-        <title>Create Next App</title>
+        <title>Dashboard</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Read <Link href="/posts/first-post">this page</Link>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{" "}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <div className="page-container max-w-screen ">
+        {/* <OrderPopup list={lista} /> */}
+        <div className="content-wrap">
+          <Header />
+          <main className="flex w-full max-h-screen">
+            <div className="flex-grow-0 border-r-4 w-96 flex flex-col items-center p-4">
+              <h2 className="text-3xl font-semibold text-gray-800">
+                Comparar pedidos
+              </h2>
+              <div className="bg-gray-50 rounded-lg px-3 py-4 mx-1 my-5 shadow-inner">
+                <p className="text-lg">
+                  Informação: Compara duas tabelas em um arquivo excel fazendo a
+                  busca por pedido e então faz a diferença para gerar uma lista
+                  com os pedidos que possuem variação em valor maiores que
+                  R$10,00.
+                </p>
+              </div>
+              <button className="btn bg-green-300 text-white">Enviar arquivo</button>
+              <p className="py-1 text-lg font-semibold">Ou</p>
+              <button className="btn">Selecione arquivo</button>
+            </div>
+            <div className="flex-grow p-4">
+              <h3 className="text-3xl font-medium text-gray-800">
+                Resultado
+              </h3>
+              <div className="grid grid-cols-2 gap-6 my-8 overflow-y-scroll h-4/5">
+                {compareValues(data).map((item, index) => {
+                  return <Card key={item.id} id={item.id} />;
+                })}
+              </div>
+            </div>
+          </main>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+        <footer className="footer bg-green-400"></footer>
+      </div>
+    </>
   );
+}
+
+export async function getStaticProps() {
+  const data = excelConverter();
+  return {
+    props: {
+      data,
+    },
+  };
 }
