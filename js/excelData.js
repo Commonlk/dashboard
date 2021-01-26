@@ -21,7 +21,7 @@ const excelConverter = () => {
       {
         name: "sheet2",
         header: {
-          rows: 5,
+          rows: 4,
         },
         columnToKey: {
           A: "id",
@@ -35,7 +35,6 @@ const excelConverter = () => {
       },
     ],
   });
-  // console.log(data.sheet1);
   return data;
 };
 
@@ -48,7 +47,7 @@ const productSelector = (data) => {
         qty: d.qty,
         liq: d.liq,
       });
-    } else {
+    } else if (d.id !== undefined) {
       holder[d.id] = [
         {
           product: d.description,
@@ -64,6 +63,14 @@ const productSelector = (data) => {
   }
 
   return dataCompressed;
+};
+
+const quickSearch = (search, obj) => {
+  for (const elem of obj) {
+    if (elem.id === search) {
+      console.log(elem);
+    }
+  }
 };
 
 const compareValues = (data) => {
@@ -101,29 +108,32 @@ const compareValues = (data) => {
 
   // Compares the summed up values
   let dataFinal = [];
+  let removedDuplicates = [];
   for (let i = 0; i < data.sheet2.length; i++) {
     for (let j = 0; j < dataSum.length; j++) {
       let sheet2 = data.sheet2[i];
       if (sheet2.id == dataSum[j].id) {
         let price = parseFloat(dataSum[j].totalPrice).toFixed(2);
-        let dif = Math.abs(price - sheet2.liq);
+        let dif = Math.abs(price - sheet2.price);
 
         dataFinal.push({
           id: dataSum[j].id,
           prices: {
             priceA: price,
-            priceB: parseFloat(sheet2.liq).toFixed(2),
+            priceB: parseFloat(sheet2.price).toFixed(2),
           },
           difference: parseFloat(dif).toFixed(2),
         });
+
+        removedDuplicates = dataFinal.filter(
+          (elemA, index, arr) =>
+            arr.findIndex((elemB) => elemB.id === elemA.id) === index
+        );
       }
     }
   }
 
-  holderA = productSelector(data.sheet1);
-  holderB = productSelector(data.sheet2);
-
-  return dataFinal;
+  return removedDuplicates;
 };
 
 // const compareValues = (data) => {
