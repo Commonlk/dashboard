@@ -1,14 +1,10 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React from "react";
 import Header from "../components/header";
 import Card from "../components/card";
-import OrderPopup from "../components/order_popup";
 import { compareValues, excelConverter } from "../js/excelData";
 
 export default function Home({ data }) {
-  const [isActive, setActive] = useState(false);
-  const [details, setDetails] = useState({});
-
   return (
     <>
       <Head>
@@ -42,16 +38,18 @@ export default function Home({ data }) {
               <h3 className="text-3xl font-medium text-gray-800">Resultado</h3>
               <div className="grid grid-cols-2 gap-6 my-8 overflow-y-scroll h-4/5">
                 {compareValues(data).map((item, index) => {
-                  return (
-                    <Card
-                      key={item.id}
-                      id={item.id}
-                      lot={item.lot}
-                      priceA={item.prices.priceA}
-                      priceB={item.prices.priceB}
-                      diff={item.difference}
-                    />
-                  );
+                  if (item.difference >= 10) {
+                    return (
+                      <Card
+                        key={item.id}
+                        id={item.id}
+                        priceA={item.prices.priceA}
+                        priceB={item.prices.priceB}
+                        diff={item.difference}
+                        data={data}
+                      />
+                    );
+                  }
                 })}
               </div>
             </div>
