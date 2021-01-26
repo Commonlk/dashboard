@@ -3,21 +3,18 @@ export default function Card(props) {
     <div className="card bg-white w-full flex justify-between rounded-lg shadow-md">
       <div key={props.id} className="px-4 py-3">
         <p>
-          <span>Lote:</span> {props.lot}
+          <span>Número do pedido:</span> {props.id}
         </p>
         <p>
           <span>Valor A:</span> R$ {props.priceA}
         </p>
         <p>
-          <span>Diferença:</span> R$ {props.diff}
+          <span>Valor B:</span> R$ {props.priceB}
         </p>
       </div>
       <div className="px-4 py-3">
         <p>
-          <span>Número do pedido:</span> {props.id}
-        </p>
-        <p>
-          <span>Valor B:</span> R$ {props.priceB}
+          <span>Diferença:</span> R$ {props.diff}
         </p>
       </div>
       <div>
