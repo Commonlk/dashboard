@@ -1,15 +1,3 @@
-import $ from "jquery";
-
-function handleClick(elem) {
-  let id = elem.target.parentNode.parentNode.id;
-  $(`#${id}`).append(`
-        <div>
-            <p>ok</p>
-        </div>
-    `);
-  console.log();
-}
-
 export default function Card(props) {
   return (
     <div className="card bg-white w-full flex justify-between rounded-lg shadow-md">
@@ -33,10 +21,7 @@ export default function Card(props) {
         </p>
       </div>
       <div>
-        <button
-          onClick={handleClick}
-          className="h-full bg-green-300 rounded-r-lg p-3 text-xl font-semibold text-white hover:bg-green-400 transition-all"
-        >
+        <button className="h-full bg-green-300 rounded-r-lg p-3 text-xl font-semibold text-white hover:bg-green-400 transition-all">
           Verificar pedido
         </button>
       </div>
