@@ -1,12 +1,16 @@
 let _ = require("lodash");
 let excelToJson = require("convert-excel-to-json");
 
-const excelConverter = () => {
+const excelConverter = (sheet1, sheet2, path) => {
+  if (!sheet1 || !sheet2 || !path) {
+    return false;
+  }
+
   const data = excelToJson({
-    sourceFile: `public/uploads/order.xlsx`,
+    sourceFile: path,
     sheets: [
       {
-        name: "sheet1",
+        name: sheet1,
         header: {
           rows: 1,
         },
@@ -19,7 +23,7 @@ const excelConverter = () => {
         },
       },
       {
-        name: "sheet2",
+        name: sheet2,
         header: {
           rows: 4,
         },
