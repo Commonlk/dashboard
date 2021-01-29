@@ -1,4 +1,3 @@
-import $ from "jquery";
 import { useState } from "react";
 import { quickSearch, productSelector } from "../js/excelData";
 
