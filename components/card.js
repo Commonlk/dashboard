@@ -8,8 +8,6 @@ const OrderPopup = ({ data, handleClick, id }) => {
   const resultA = quickSearch(id, productSelector(sheet1));
   const resultB = quickSearch(id, productSelector(sheet2));
 
-  console.log(resultA, resultB);
-
   return (
     <>
       <div className="fixed w-full h-full top-0 left-0 bg-black opacity-50 z-10"></div>

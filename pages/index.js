@@ -7,7 +7,6 @@ import { compareValues, excelConverter } from "../js/excelData";
 export default function Home({ data }) {
   const hiddenFileInput = useRef(null);
   const [uploaded, setUploaded] = useState(false);
-  const [currentFile, setCurrentFile] = useState("");
 
   const handleClick = () => {
     hiddenFileInput.current.click();
@@ -21,11 +20,12 @@ export default function Home({ data }) {
     request.open("POST", API_ENDPOINT, true);
     request.onreadystatechange = () => {
       if (request.readyState === 4 && request.status === 200) {
-        setCurrentFile(JSON.parse(request.responseText).file.path);
+        console.log(request.responseText);
       }
     };
     formData.append("file", file);
     request.send(formData);
+
     setUploaded(true);
   };
 
@@ -53,13 +53,16 @@ export default function Home({ data }) {
                 </p>
               </div>
               <div className="">
-                <button
-                  type="button"
-                  onClick={handleClick}
-                  className="btn bg-green-300 text-white"
-                >
-                  Upload arquivo
-                </button>
+                {!uploaded ? (
+                  <button
+                    type="button"
+                    onClick={handleClick}
+                    className="btn bg-green-300 text-white"
+                  >
+                    Upload arquivo
+                  </button>
+                ) : null}
+
                 <input
                   type="file"
                   ref={hiddenFileInput}
@@ -70,8 +73,8 @@ export default function Home({ data }) {
             </div>
             <div className="flex-grow p-4">
               <h3 className="text-3xl font-medium text-gray-800">Resultado</h3>
-              <div className="grid grid-cols-2 gap-6 my-8 overflow-y-scroll h-4/5">
-                {data ? (
+              <div className="relative grid grid-cols-2 gap-6 my-8 overflow-y-scroll h-4/5">
+                {uploaded ? (
                   compareValues(data).map((item) => {
                     if (item.difference >= 10) {
                       return (
@@ -87,7 +90,9 @@ export default function Home({ data }) {
                     }
                   })
                 ) : (
-                  <div className="">Waiting</div>
+                  <div className="absolute transform translate-x-1/2 translate-y-1/2 top-1/2 right-1/2 text-2xl text-green-700 animate-pulse">
+                    Aguardando...
+                  </div>
                 )}
               </div>
             </div>
@@ -100,11 +105,7 @@ export default function Home({ data }) {
 }
 
 export async function getStaticProps() {
-  const data = excelConverter(
-    "sheet1",
-    "sheet2",
-    "./public/uploads/order.xlsx"
-  );
+  const data = excelConverter();
 
   return {
     props: {

@@ -20,15 +20,7 @@ export default async (req, res) => {
       /* this is where the renaming happens */
       .on("fileBegin", function (name, file) {
         //rename the incoming file to the file's name
-        const nameF = file.name;
-        const index = nameF.indexOf(".");
-        file.path =
-          form.uploadDir +
-          "/" +
-          nameF.slice(0, index) +
-          "-" +
-          Date.now() +
-          nameF.slice(index, nameF.length);
+        file.path = form.uploadDir + "/order.xlsx";
       })
       .on("file", function (field, file) {});
 

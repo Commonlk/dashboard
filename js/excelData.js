@@ -1,49 +1,51 @@
-let _ = require("lodash");
-let excelToJson = require("convert-excel-to-json");
+import excelToJson from "convert-excel-to-json";
+import fs from "fs";
 
-const excelConverter = (sheet1, sheet2, path) => {
-  if (!sheet1 || !sheet2 || !path) {
+const excelConverter = () => {
+  const path = `public/uploads/order.xlsx`;
+
+  if (fs.existsSync(path)) {
+    const data = excelToJson({
+      sourceFile: path,
+      sheets: [
+        {
+          name: "planilha1",
+          header: {
+            rows: 1,
+          },
+          columnToKey: {
+            AD: "id",
+            Y: "description",
+            Z: "qty",
+            AA: "liq",
+            AT: "itemcod",
+          },
+        },
+        {
+          name: "planilha2",
+          header: {
+            rows: 4,
+          },
+          columnToKey: {
+            A: "id",
+            G: "store",
+            L: "price",
+            AE: "itemcod",
+            U: "description",
+            V: "qty",
+            Y: "liq",
+          },
+        },
+      ],
+    });
+    return data;
+  } else {
     return false;
   }
-
-  const data = excelToJson({
-    sourceFile: path,
-    sheets: [
-      {
-        name: sheet1,
-        header: {
-          rows: 1,
-        },
-        columnToKey: {
-          AD: "id",
-          Y: "description",
-          Z: "qty",
-          AA: "liq",
-          AT: "itemcod",
-        },
-      },
-      {
-        name: sheet2,
-        header: {
-          rows: 4,
-        },
-        columnToKey: {
-          A: "id",
-          G: "store",
-          L: "price",
-          AE: "itemcod",
-          U: "description",
-          V: "qty",
-          Y: "liq",
-        },
-      },
-    ],
-  });
-  return data;
 };
 
 const productSelector = (data) => {
-  holder = {};
+  const holder = {};
   data.forEach(function (d) {
     if (holder.hasOwnProperty(d.id)) {
       holder[d.id].push({
@@ -80,15 +82,18 @@ const quickSearch = (search, obj) => {
 const compareValues = (data) => {
   // Selects all the orders that exists on both sheets and push into a new array
   let originalData = [];
-  for (let i = 0; i < data.sheet1.length; i++) {
-    for (let j = 0; j < data.sheet2.length; j++) {
-      let sheet1 = data.sheet1[i];
-      let sheet2 = data.sheet2[j];
-      if (sheet1.id == sheet2.id && sheet1.itemcod == sheet2.itemcod) {
+  for (let i = 0; i < data.planilha1.length; i++) {
+    for (let j = 0; j < data.planilha2.length; j++) {
+      let planilha1 = data.planilha1[i];
+      let planilha2 = data.planilha2[j];
+      if (
+        planilha1.id == planilha2.id &&
+        planilha1.itemcod == planilha2.itemcod
+      ) {
         originalData.push({
-          id: sheet1.id,
-          description: sheet1.description,
-          totalPrice: sheet1.liq * sheet1.qty,
+          id: planilha1.id,
+          description: planilha1.description,
+          totalPrice: planilha1.liq * planilha1.qty,
         });
       }
     }
@@ -113,18 +118,18 @@ const compareValues = (data) => {
   // Compares the summed up values
   let dataFinal = [];
   let removedDuplicates = [];
-  for (let i = 0; i < data.sheet2.length; i++) {
+  for (let i = 0; i < data.planilha2.length; i++) {
     for (let j = 0; j < dataSum.length; j++) {
-      let sheet2 = data.sheet2[i];
-      if (sheet2.id == dataSum[j].id) {
+      let planilha2 = data.planilha2[i];
+      if (planilha2.id == dataSum[j].id) {
         let price = parseFloat(dataSum[j].totalPrice).toFixed(2);
-        let dif = Math.abs(price - sheet2.price);
+        let dif = Math.abs(price - planilha2.price);
 
         dataFinal.push({
           id: dataSum[j].id,
           prices: {
             priceA: price,
-            priceB: parseFloat(sheet2.price).toFixed(2),
+            priceB: parseFloat(planilha2.price).toFixed(2),
           },
           difference: parseFloat(dif).toFixed(2),
         });
@@ -140,7 +145,4 @@ const compareValues = (data) => {
   return removedDuplicates;
 };
 
-exports.excelConverter = excelConverter;
-exports.compareValues = compareValues;
-exports.productSelector = productSelector;
-exports.quickSearch = quickSearch;
+export { excelConverter, compareValues, productSelector, quickSearch };
